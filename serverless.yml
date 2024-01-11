@@ -1,0 +1,32 @@
+service: sls-lambda-websocket
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-central-1
+
+  websocketsApiRouteSelectionExpression: $request.body.action
+  websocketsApiName: my-websockets-api
+  websocketsDescription: Custom Serverless Websockets
+
+
+custom:
+  dockerizePip: non-linux
+
+
+functions:
+  connectionHandler:
+    handler: handler.connectionHandler
+    timeout: 60
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
+
+
+plugins:
+  - serverless-python-requirements
